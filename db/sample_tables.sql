@@ -1,3 +1,6 @@
+CREATE NAMESPACE IF NOT EXISTS "shopping";
+CREATE NAMESPACE IF NOT EXISTS "inventory";
+
 CREATE TABLE IF NOT EXISTS shopping.order (
   id TEXT,
   order_datetime TIMESTAMP,
