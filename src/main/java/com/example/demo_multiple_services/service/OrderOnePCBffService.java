@@ -1,7 +1,6 @@
 package com.example.demo_multiple_services.service;
 
-import com.example.demo_multiple_services.dto.ProductDto;
-import com.example.demo_multiple_services.model.Order;
+
 import com.example.demo_multiple_services.dto.OrderDto;
 import com.example.demo_multiple_services.dto.ApiResponse;
 import com.example.demo_multiple_services.dto.ResponseStatusDto;
@@ -47,52 +46,6 @@ public class OrderOnePCBffService extends BaseOnePCBffService {
 
     public OrderOnePCBffService(DistributedTransactionManager manager) throws InstantiationException, IllegalAccessException {
         super(manager);
-    }
-
-
-
-    // Place Order
-    public ResponseStatusDto placeOrder(OrderDto orderDto) throws CustomException {
-        DistributedTransaction transaction = null;
-        ProductDto productDto = ProductDto.builder()
-                .id(orderDto.getProductId())
-                .build();
-        try {
-            transaction = manager.start();
-            String transactionId = transaction.getId();
-            log.info("Starting distributed transaction: {}", transactionId);
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.set("ScalarDB-Transaction-ID", transactionId);
-
-            // Get Inventory Info
-            String urlGet = BASE_URL + serverPort + "/product-one-pc" + "/" + productDto.getId();
-            productDto = executeGet(urlGet, headers, new ParameterizedTypeReference<ApiResponse<ProductDto>>() {});
-
-            // Check Stock
-            if(productDto.getStock() < orderDto.getOrderQty()){
-                throw new RuntimeException("We are out of stock.");
-            }
-            // Set new stock value
-            productDto.setStock(productDto.getStock() - orderDto.getOrderQty());
-
-            String urlPut = BASE_URL + serverPort + "/product-one-pc";
-            executePut(urlPut, productDto, headers);
-
-            // Insert Order
-            String url = BASE_URL + serverPort + "/order-one-pc";
-            executePost(url, orderDto, headers);
-
-            transaction.commit();
-            log.info("Distributed transaction committed: {}", transactionId);
-
-            return ResponseStatusDto.builder().code(0).message("").build();
-        } catch (Exception e) {
-            log.error("Transaction failed: {}", e.getMessage(), e);
-            handleTransactionException(e, transaction);
-            throw new CustomException(e, determineErrorCode(e));
-        }
     }
 
     // Create Record

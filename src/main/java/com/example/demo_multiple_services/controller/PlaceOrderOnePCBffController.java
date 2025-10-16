@@ -4,13 +4,11 @@ import com.example.demo_multiple_services.dto.ApiResponse;
 import com.example.demo_multiple_services.dto.OrderDto;
 import com.example.demo_multiple_services.dto.ResponseStatusDto;
 import com.example.demo_multiple_services.exception.CustomException;
-import com.example.demo_multiple_services.service.OrderOnePCBffService;
+import com.example.demo_multiple_services.service.PlaceOrderOnePCBffService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * One-Phase Commit BFF Controller for Order
@@ -27,11 +25,11 @@ import java.util.List;
 @RestController
 public class PlaceOrderOnePCBffController {
     @Autowired
-    private OrderOnePCBffService orderOnePCBffService;
+    private PlaceOrderOnePCBffService placeOrderOnePCBffService;
 
     @PostMapping
     public ResponseEntity<ApiResponse<Void>> insertOrder(@RequestBody OrderDto orderDto) {
-        ResponseStatusDto status = orderOnePCBffService.placeOrder(orderDto);
+        ResponseStatusDto status = placeOrderOnePCBffService.placeOrder(orderDto);
         return ResponseEntity.ok(ApiResponse.fromResponseStatus(status));
     }
 
