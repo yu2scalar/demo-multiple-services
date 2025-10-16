@@ -1,0 +1,21 @@
+{
+  "shopping.order": {
+    "transaction": true,
+    "partition-key": ["id"],
+    "columns": {
+      "id": "TEXT",
+      "order_datetime": "TIMESTAMP",
+      "order_qty": "INT",
+      "product_id": "INT"
+    }
+  },
+  "inventory.product": {
+    "transaction": true,
+    "partition-key": ["id"],
+    "columns": {
+      "id": "INT",
+      "product_name": "TEXT",
+      "stock": "INT"
+    }
+  }
+}
